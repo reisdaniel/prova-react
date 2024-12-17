@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import tmdbApi from '../services/tmdbApi';
 import useMovieStore from '../store/movieStore';
+import MoviesTable from './MoviesTable';
 
 const MoviesList = () => {
   const { movies, setMovies } = useMovieStore();
@@ -12,18 +13,12 @@ const MoviesList = () => {
     };
 
     fetchMovies();
-  }, []);
+  }, [setMovies]);
 
   return (
     <div>
       <h1>Popular Movies</h1>
-      <ul>
-        {movies.map(movie => (
-          <li key={movie.id}>
-            {movie.title} ({movie.release_date})
-          </li>
-        ))}
-      </ul>
+      <MoviesTable data={movies} />
     </div>
   );
 };
