@@ -1,16 +1,16 @@
 import React from 'react';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import theme from './theme';
 import MoviesList from './components/MoviesList';
-import MovieFormModal from './components/forms/MovieFormModal';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Movie Dashboard</h1>
+    <ThemeProvider theme={theme}>
+      <CssBaseline /> {/* Reseta estilos padrão do navegador */}
+      <div>
         <MoviesList />
-        <MovieFormModal />
-      </header>
-    </div>
+      </div>
+    </ThemeProvider>
   );
 }
 

@@ -3,6 +3,7 @@ import tmdbApi from '../services/tmdbApi';
 import useMovieStore from '../store/movieStore';
 import MoviesTable from './tables/MoviesTable';
 import MovieModal from './forms/MovieFormModal';
+import { Typography, Button, Container } from '@mui/material';
 
 const MoviesList = () => {
   const { movies, setMovies, deleteMovie } = useMovieStore();
@@ -33,20 +34,28 @@ const MoviesList = () => {
   };
 
   return (
-    <div>
-      <h1>Popular Movies</h1>
-      <button onClick={handleAddMovie}>Add New Movie</button>
-      <MoviesTable
-        data={movies}
-        onEdit={handleEditMovie}
-        onDelete={handleDeleteMovie}
-      />
+    <Container>
+      <Typography variant="h1" gutterBottom>
+        Movie Dashboard
+      </Typography>
+      <Typography variant="h2" gutterBottom>
+        Popular Movies
+      </Typography>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleAddMovie}
+        style={{ marginBottom: '16px' }}
+      >
+        Add New Movie
+      </Button>
+      <MoviesTable data={movies} onEdit={handleEditMovie} onDelete={handleDeleteMovie} />
       <MovieModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         selectedMovie={selectedMovie}
       />
-    </div>
+    </Container>
   );
 };
 
