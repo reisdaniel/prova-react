@@ -5,7 +5,7 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 
-const MoviesTable = ({ data }) => {
+const MoviesTable = ({ data, onEdit }) => {
   const columns = React.useMemo(
     () => [
       { accessorKey: 'title', header: 'Title' },
@@ -13,8 +13,14 @@ const MoviesTable = ({ data }) => {
       { accessorKey: 'vote_average', header: 'Rating' },
       { accessorKey: 'vote_count', header: 'Votes' },
       { accessorKey: 'original_language', header: 'Language' },
+      {
+        header: 'Actions',
+        cell: ({ row }) => (
+          <button onClick={() => onEdit(row.original)}>Edit</button>
+        ),
+      },
     ],
-    []
+    [onEdit]
   );
 
   const table = useReactTable({
@@ -25,11 +31,10 @@ const MoviesTable = ({ data }) => {
 
   return (
     <table>
-      {/* Cabeçalho */}
       <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
+        {table.getHeaderGroups().map(headerGroup => (
           <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
+            {headerGroup.headers.map(header => (
               <th key={header.id}>
                 {flexRender(header.column.columnDef.header, header.getContext())}
               </th>
@@ -37,12 +42,10 @@ const MoviesTable = ({ data }) => {
           </tr>
         ))}
       </thead>
-
-      {/* Corpo */}
       <tbody>
-        {table.getRowModel().rows.map((row) => (
+        {table.getRowModel().rows.map(row => (
           <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
+            {row.getVisibleCells().map(cell => (
               <td key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
