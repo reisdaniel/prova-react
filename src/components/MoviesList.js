@@ -5,11 +5,10 @@ import MoviesTable from './tables/MoviesTable';
 import MovieModal from './forms/MovieFormModal';
 
 const MoviesList = () => {
-  const { movies, setMovies } = useMovieStore(); // Zustand store
-  const [modalOpen, setModalOpen] = useState(false); // Estado para abrir/fechar modal
-  const [selectedMovie, setSelectedMovie] = useState(null); // Estado para o filme selecionado
+  const { movies, setMovies, deleteMovie } = useMovieStore();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
-  // Carrega os filmes populares ao montar o componente
   useEffect(() => {
     const fetchMovies = async () => {
       const data = await tmdbApi.fetchPopularMovies();
@@ -19,31 +18,32 @@ const MoviesList = () => {
     fetchMovies();
   }, [setMovies]);
 
-  // Função para adicionar um novo filme
   const handleAddMovie = () => {
-    setSelectedMovie(null); // Sem filme selecionado
-    setModalOpen(true); // Abre o modal
+    setSelectedMovie(null);
+    setModalOpen(true);
   };
 
-  // Função para editar um filme existente
   const handleEditMovie = (movie) => {
-    setSelectedMovie(movie); // Define o filme a ser editado
-    setModalOpen(true); // Abre o modal
+    setSelectedMovie(movie);
+    setModalOpen(true);
+  };
+
+  const handleDeleteMovie = (id) => {
+    deleteMovie(id);
   };
 
   return (
     <div>
       <h1>Popular Movies</h1>
-      {/* Botão para abrir o modal de adição */}
       <button onClick={handleAddMovie}>Add New Movie</button>
-
-      {/* Componente de tabela com botão "Editar" */}
-      <MoviesTable data={movies} onEdit={handleEditMovie} />
-
-      {/* Modal para Adicionar/Editar Filmes */}
+      <MoviesTable
+        data={movies}
+        onEdit={handleEditMovie}
+        onDelete={handleDeleteMovie}
+      />
       <MovieModal
         isOpen={modalOpen}
-        onClose={() => setModalOpen(false)} // Função para fechar o modal
+        onClose={() => setModalOpen(false)}
         selectedMovie={selectedMovie}
       />
     </div>
