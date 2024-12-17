@@ -4,49 +4,96 @@ import {
   getCoreRowModel,
   flexRender,
 } from '@tanstack/react-table';
-import { Table, TableHead, TableBody, TableRow, TableCell, Button, Link } from '@mui/material';
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  IconButton,
+  Link,
+  Paper,
+  TableContainer,
+  Tooltip,
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from '@mui/icons-material/Info';
 
 const MoviesTable = ({ data, onEdit, onDelete, onDetails }) => {
   const columns = React.useMemo(
     () => [
       {
         accessorKey: 'title',
-        header: 'Title',
+        header: 'Título',
         cell: ({ row }) => (
           <Link
             component="button"
             variant="body1"
             onClick={() => onDetails(row.original)}
+            sx={{
+              color: '#1976D2',
+              textDecoration: 'none',
+              fontWeight: 'bold',
+              '&:hover': { textDecoration: 'underline' },
+            }}
           >
             {row.original.title}
           </Link>
         ),
       },
-      { accessorKey: 'release_date', header: 'Release Date' },
-      { accessorKey: 'vote_average', header: 'Rating' },
-      { accessorKey: 'vote_count', header: 'Votes' },
-      { accessorKey: 'original_language', header: 'Language' },
+      { accessorKey: 'release_date', header: 'Data de Lançamento' },
+      { accessorKey: 'vote_average', header: 'Nota' },
+      { accessorKey: 'vote_count', header: 'Votos' },
+      { accessorKey: 'original_language', header: 'Idioma' },
       {
-        header: 'Actions',
+        header: 'Ações',
         cell: ({ row }) => (
           <>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => onEdit(row.original)}
-              style={{ marginRight: '8px' }}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              size="small"
-              onClick={() => onDelete(row.original.id)}
-            >
-              Delete
-            </Button>
+            {/* Botão de Detalhes */}
+            <Tooltip title="Detalhes">
+              <IconButton
+                color="primary"
+                onClick={() => onDetails(row.original)}
+                size="small"
+                sx={{
+                  transition: 'transform 0.2s',
+                  '&:hover': { transform: 'scale(1.2)' },
+                }}
+              >
+                <InfoIcon />
+              </IconButton>
+            </Tooltip>
+
+            {/* Botão de Edição */}
+            <Tooltip title="Editar">
+              <IconButton
+                color="primary"
+                onClick={() => onEdit(row.original)}
+                size="small"
+                sx={{
+                  transition: 'transform 0.2s',
+                  '&:hover': { transform: 'scale(1.2)' },
+                }}
+              >
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+
+            {/* Botão de Exclusão */}
+            <Tooltip title="Excluir">
+              <IconButton
+                color="secondary"
+                onClick={() => onDelete(row.original.id)}
+                size="small"
+                sx={{
+                  transition: 'transform 0.2s',
+                  '&:hover': { transform: 'scale(1.2)' },
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
           </>
         ),
       },
@@ -61,30 +108,65 @@ const MoviesTable = ({ data, onEdit, onDelete, onDetails }) => {
   });
 
   return (
-    <Table>
-      <TableHead>
-        {table.getHeaderGroups().map(headerGroup => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map(header => (
-              <TableCell key={header.id}>
-                {flexRender(header.column.columnDef.header, header.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableHead>
-      <TableBody>
-        {table.getRowModel().rows.map(row => (
-          <TableRow key={row.id}>
-            {row.getVisibleCells().map(cell => (
-              <TableCell key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <TableContainer
+      component={Paper}
+      elevation={4}
+      sx={{ borderRadius: '12px', overflow: 'hidden' }}
+    >
+      <Table>
+        {/* Cabeçalho da Tabela */}
+        <TableHead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id} sx={{ backgroundColor: '#1976D2' }}>
+              {headerGroup.headers.map((header) => (
+                <TableCell
+                  key={header.id}
+                  sx={{
+                    color: '#FFF',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    borderBottom: 'none',
+                    padding: '12px',
+                  }}
+                >
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableHead>
+
+        {/* Corpo da Tabela */}
+        <TableBody>
+          {table.getRowModel().rows.map((row) => (
+            <TableRow
+              key={row.id}
+              hover
+              sx={{
+                '&:nth-of-type(odd)': { backgroundColor: '#F9FAFB' },
+                '&:hover': {
+                  backgroundColor: '#E3F2FD',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                },
+              }}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <TableCell
+                  key={cell.id}
+                  sx={{
+                    padding: '12px',
+                    textAlign: 'center',
+                    fontSize: '0.95rem',
+                  }}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 
