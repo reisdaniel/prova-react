@@ -1,35 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button } from '@mui/material';
-import useMovieStore from '../store/movieStore';
+import useMovieStore from '../../store/movieStore';
 
-const MovieFormModal = () => {
-  const { isFormOpen, setIsFormOpen, selectedMovie, addMovie, updateMovie } = useMovieStore();
-  const [movieData, setMovieData] = useState({ title: '', release_date: '', vote_average: '', vote_count: '', original_language: '' });
+const MovieModal = ({ isOpen, onClose, selectedMovie, isEditing = false }) => {
+  const { addMovie, updateMovie } = useMovieStore();
+  const [movieData, setMovieData] = useState({
+    title: '',
+    release_date: '',
+    vote_average: '',
+    vote_count: '',
+    original_language: ''
+  });
 
   useEffect(() => {
-    if (selectedMovie) setMovieData(selectedMovie);
-    else setMovieData({ title: '', release_date: '', vote_average: '', vote_count: '', original_language: '' });
+    if (selectedMovie) {
+      setMovieData(selectedMovie);
+    } else {
+      setMovieData({
+        title: '',
+        release_date: '',
+        vote_average: '',
+        vote_count: '',
+        original_language: ''
+      });
+    }
   }, [selectedMovie]);
 
   const handleClose = () => {
-    setIsFormOpen(false);
+    onClose(); // Fecha o modal corretamente
   };
 
   const handleSubmit = () => {
     if (selectedMovie) {
       updateMovie(movieData);
     } else {
-      addMovie({ ...movieData, id: Math.random() });
+      addMovie({ ...movieData, id: Math.random().toString() });
     }
     handleClose();
   };
 
   const handleChange = (e) => {
-    setMovieData({ ...movieData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setMovieData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <Dialog open={isFormOpen} onClose={handleClose}>
+    <Dialog open={isOpen} onClose={handleClose}>
       <DialogTitle>{selectedMovie ? 'Edit Movie' : 'Add New Movie'}</DialogTitle>
       <DialogContent>
         <TextField
@@ -47,9 +63,10 @@ const MovieFormModal = () => {
           margin="dense"
           name="release_date"
           label="Release Date"
-          type="text"
+          type="date"
           fullWidth
           variant="standard"
+          InputLabelProps={{ shrink: true }}
           value={movieData.release_date}
           onChange={handleChange}
         />
@@ -57,7 +74,7 @@ const MovieFormModal = () => {
           margin="dense"
           name="vote_average"
           label="Rating"
-          type="text"
+          type="number"
           fullWidth
           variant="standard"
           value={movieData.vote_average}
@@ -67,7 +84,7 @@ const MovieFormModal = () => {
           margin="dense"
           name="vote_count"
           label="Votes"
-          type="text"
+          type="number"
           fullWidth
           variant="standard"
           value={movieData.vote_count}
@@ -92,4 +109,4 @@ const MovieFormModal = () => {
   );
 };
 
-export default MovieFormModal;
+export default MovieModal;

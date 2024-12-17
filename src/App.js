@@ -1,6 +1,6 @@
 import React from 'react';
 import MoviesList from './components/MoviesList';
-import MovieFormModal from './components/MovieFormModal';
+import MovieFormModal from './components/forms/MovieFormModal';
 
 function App() {
   return (
