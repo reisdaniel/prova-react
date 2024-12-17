@@ -4,12 +4,24 @@ import {
   getCoreRowModel,
   flexRender,
 } from '@tanstack/react-table';
-import { Table, TableHead, TableBody, TableRow, TableCell, Button } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell, Button, Link } from '@mui/material';
 
-const MoviesTable = ({ data, onEdit, onDelete }) => {
+const MoviesTable = ({ data, onEdit, onDelete, onDetails }) => {
   const columns = React.useMemo(
     () => [
-      { accessorKey: 'title', header: 'Title' },
+      {
+        accessorKey: 'title',
+        header: 'Title',
+        cell: ({ row }) => (
+          <Link
+            component="button"
+            variant="body1"
+            onClick={() => onDetails(row.original)}
+          >
+            {row.original.title}
+          </Link>
+        ),
+      },
       { accessorKey: 'release_date', header: 'Release Date' },
       { accessorKey: 'vote_average', header: 'Rating' },
       { accessorKey: 'vote_count', header: 'Votes' },
@@ -39,7 +51,7 @@ const MoviesTable = ({ data, onEdit, onDelete }) => {
         ),
       },
     ],
-    [onEdit, onDelete]
+    [onEdit, onDelete, onDetails]
   );
 
   const table = useReactTable({
@@ -50,20 +62,17 @@ const MoviesTable = ({ data, onEdit, onDelete }) => {
 
   return (
     <Table>
-      {/* Cabeçalho */}
       <TableHead>
         {table.getHeaderGroups().map(headerGroup => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map(header => (
-              <TableCell key={header.id} style={{ fontWeight: 'bold' }}>
+              <TableCell key={header.id}>
                 {flexRender(header.column.columnDef.header, header.getContext())}
               </TableCell>
             ))}
           </TableRow>
         ))}
       </TableHead>
-
-      {/* Corpo */}
       <TableBody>
         {table.getRowModel().rows.map(row => (
           <TableRow key={row.id}>
