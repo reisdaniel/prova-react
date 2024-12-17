@@ -4,6 +4,7 @@ import {
   getCoreRowModel,
   flexRender,
 } from '@tanstack/react-table';
+import { Table, TableHead, TableBody, TableRow, TableCell, Button } from '@mui/material';
 
 const MoviesTable = ({ data, onEdit, onDelete }) => {
   const columns = React.useMemo(
@@ -17,8 +18,23 @@ const MoviesTable = ({ data, onEdit, onDelete }) => {
         header: 'Actions',
         cell: ({ row }) => (
           <>
-            <button onClick={() => onEdit(row.original)}>Edit</button>
-            <button onClick={() => onDelete(row.original.id)}>Delete</button>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={() => onEdit(row.original)}
+              style={{ marginRight: '8px' }}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              size="small"
+              onClick={() => onDelete(row.original.id)}
+            >
+              Delete
+            </Button>
           </>
         ),
       },
@@ -33,30 +49,33 @@ const MoviesTable = ({ data, onEdit, onDelete }) => {
   });
 
   return (
-    <table>
-      <thead>
+    <Table>
+      {/* Cabeçalho */}
+      <TableHead>
         {table.getHeaderGroups().map(headerGroup => (
-          <tr key={headerGroup.id}>
+          <TableRow key={headerGroup.id}>
             {headerGroup.headers.map(header => (
-              <th key={header.id}>
+              <TableCell key={header.id} style={{ fontWeight: 'bold' }}>
                 {flexRender(header.column.columnDef.header, header.getContext())}
-              </th>
+              </TableCell>
             ))}
-          </tr>
+          </TableRow>
         ))}
-      </thead>
-      <tbody>
+      </TableHead>
+
+      {/* Corpo */}
+      <TableBody>
         {table.getRowModel().rows.map(row => (
-          <tr key={row.id}>
+          <TableRow key={row.id}>
             {row.getVisibleCells().map(cell => (
-              <td key={cell.id}>
+              <TableCell key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </td>
+              </TableCell>
             ))}
-          </tr>
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 };
 
