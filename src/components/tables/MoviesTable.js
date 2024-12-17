@@ -5,7 +5,7 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 
-const MoviesTable = ({ data, onEdit }) => {
+const MoviesTable = ({ data, onEdit, onDelete }) => {
   const columns = React.useMemo(
     () => [
       { accessorKey: 'title', header: 'Title' },
@@ -16,11 +16,14 @@ const MoviesTable = ({ data, onEdit }) => {
       {
         header: 'Actions',
         cell: ({ row }) => (
-          <button onClick={() => onEdit(row.original)}>Edit</button>
+          <>
+            <button onClick={() => onEdit(row.original)}>Edit</button>
+            <button onClick={() => onDelete(row.original.id)}>Delete</button>
+          </>
         ),
       },
     ],
-    [onEdit]
+    [onEdit, onDelete]
   );
 
   const table = useReactTable({
