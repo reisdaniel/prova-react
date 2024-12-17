@@ -2,25 +2,25 @@ import React, { useEffect, useState } from 'react';
 import tmdbApi from '../services/tmdbApi';
 import useMovieStore from '../store/movieStore';
 import MoviesTable from './tables/MoviesTable';
+import { Typography, Button, Container, MenuItem, Select } from '@mui/material';
 import MovieModal from './forms/MovieFormModal';
-import MovieDetailsModal from './forms/MovieDetailsModal';
-import { Typography, Button, Container } from '@mui/material';
 
 const MoviesList = () => {
-  const { movies, setMovies, deleteMovie } = useMovieStore();
+  const { movies, setMovies, genres, setGenres, deleteMovie } = useMovieStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [detailsModalOpen, setDetailsModalOpen] = useState(false); // Estado do modal de detalhes
-  const [movieDetails, setMovieDetails] = useState(null); // Filme selecionado
+  const [selectedGenre, setSelectedGenre] = useState(''); // Estado para o gênero selecionado
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      const data = await tmdbApi.fetchPopularMovies();
-      setMovies(data.results);
+    const fetchData = async () => {
+      const moviesData = await tmdbApi.fetchPopularMovies();
+      const genresData = await tmdbApi.fetchGenres();
+      setMovies(moviesData.results);
+      setGenres(genresData);
     };
 
-    fetchMovies();
-  }, [setMovies]);
+    fetchData();
+  }, [setMovies, setGenres]);
 
   const handleAddMovie = () => {
     setSelectedMovie(null);
@@ -36,10 +36,12 @@ const MoviesList = () => {
     deleteMovie(id);
   };
 
-  const handleShowDetails = (movie) => {
-    setMovieDetails(movie);
-    setDetailsModalOpen(true);
-  };
+  // Filtrar os filmes pelo gênero selecionado
+  const filteredMovies = selectedGenre
+    ? movies.filter((movie) =>
+        movie.genre_ids.includes(parseInt(selectedGenre))
+      )
+    : movies;
 
   return (
     <Container>
@@ -54,21 +56,33 @@ const MoviesList = () => {
       >
         Add New Movie
       </Button>
+
+      {/* Dropdown para filtrar por gênero */}
+      <Select
+        value={selectedGenre}
+        onChange={(e) => setSelectedGenre(e.target.value)}
+        displayEmpty
+        fullWidth
+        style={{ marginBottom: '16px' }}
+      >
+        <MenuItem value="">All Genres</MenuItem>
+        {genres.map((genre) => (
+          <MenuItem key={genre.id} value={genre.id}>
+            {genre.name}
+          </MenuItem>
+        ))}
+      </Select>
+
       <MoviesTable
-        data={movies}
+        data={filteredMovies}
         onEdit={handleEditMovie}
         onDelete={handleDeleteMovie}
-        onDetails={handleShowDetails} // Passa a função de detalhes
       />
+
       <MovieModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         selectedMovie={selectedMovie}
-      />
-      <MovieDetailsModal
-        isOpen={detailsModalOpen}
-        onClose={() => setDetailsModalOpen(false)}
-        movie={movieDetails}
       />
     </Container>
   );
